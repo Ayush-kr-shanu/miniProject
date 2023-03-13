@@ -1,35 +1,31 @@
 const express=require('express')
-const {connection}=require('./db')
-
-//importing user router
-const {userRoute}=require('./routes/user.routes')
-//importing note routes
-const {noteRouter}=require('./routes/note.route')
-
-//authentication middleware import
-const {authenticate}=require('./middleware/authenticate.middleware')
-
+const { connection } = require('./config/db')
+const { userRoute } = require('./routes/user.routes')
+const { authMiddleware } = require('./middleware/middleware')
+const { productsRoute } = require('./routes/product.routes')
+const { authorise } = require('./middleware/authorise')
 const app=express()
-
 
 app.use(express.json())
 
+
+
 app.get('/',(req,res)=>{
-    res.send('Home Page')
+    res.send("Hello This is home page")
 })
 
-app.use('/user',userRoute)
-app.use(authenticate)
-app.use('/note',noteRouter)
-
+app.use('/user', userRoute)
+app.use(authMiddleware)
+app.use("/prod", productsRoute)
 
 
 app.listen(4500,async()=>{
     try {
         await connection
-         console.log('DB connected');
-
+        console.log("DB is connected");
     } catch (err) {
+        console.log("DB not connected");
         console.log(err);
     }
+    console.log("Port is running");
 })
